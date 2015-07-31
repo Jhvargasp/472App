@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class entity-name="Dependencias" table="dbo.Tbl_Dependencia">
+		<id name="Id_Dependencia" column="Id_Dependencia" type="string" length="10">
+		</id>
+		<property name="Dependencia" type="string"  column="Dependencia" not-null="false" length="10"></property>
+		<property name="Codigo" type="string"  column="Codigo" not-null="false" length="10"></property>
+		<property name="CentroCorrespondencia" type="string"  column="CentroCorrespondencia" not-null="false" length="30"></property>
+		<property name="DependenciaSuperior" type="string"  column="DependenciaSuperior" not-null="false" length="200"></property>
+		<property name="Estado" type="string"  column="Estado" not-null="false" length="2"></property>
+		<property name="Piso" type="string"  column="Piso" not-null="false" length="10"></property>
+	</class>
+</hibernate-mapping>

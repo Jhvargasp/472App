@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class entity-name="Ciudades" table="dbo.ciudades">
+		<id name="ID_CIUDAD" column="ID_CIUDAD" type="string" length="20">
+		</id>
+		<property name="ID_DPTO" type="string"  column="ID_DPTO" length="20" not-null="false"></property>
+		<property name="ID_PAIS" type="string"  column="ID_PAIS" length="20" not-null="false"></property>
+		<property name="NOMBRE" type="string"  column="NOMBRE" length="254" not-null="false"></property>
+	</class>
+</hibernate-mapping>
