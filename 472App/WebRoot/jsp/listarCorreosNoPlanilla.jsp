@@ -163,7 +163,7 @@
 						<tagdisplay:column media='html' title="Remite">
 							${document.Origen}
 						</tagdisplay:column>
-						<tagdisplay:column property="Destinatario"
+						<tagdisplay:column property="DependenciaDestino"
 							title="Destinatario" />
 						<tagdisplay:column property="Radicado" title="Radicado" />
 						<tagdisplay:column property="Anexos" title="Anexos" />

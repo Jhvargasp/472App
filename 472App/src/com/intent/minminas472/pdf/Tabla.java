@@ -292,7 +292,7 @@ public class Tabla {
 //					.toString().trim();
 			//0 piso
 			//4 dependencia
-			String colRompimientoStr="Destinatario";
+			String colRompimientoStr="DependenciaDestino";
 			if(colRompimiento==0){
 				colRompimientoStr="Piso";
 			}
@@ -403,6 +403,7 @@ public class Tabla {
 //					String[] columnNames = new String[] { "dependenciaRemite",
 //							"numRad", "descripcionAnexos", "dependenciaRecibe",
 //							"fechaRad", "" };
+					//TODO. verificar las columnas para los tipos de comunicacion
 					String[] columnNames = new String[] { "Origen",
 							"Radicado", "Anexos", "Destinatario",
 							"FechaRadicado", "" };
@@ -410,7 +411,10 @@ public class Tabla {
 					
 					for (int i = 0; i < columnNames.length; i++) { // i <
 						// numColumnas
+						
 						String valida = columnNames[i];
+						//
+						valida= (i!=3)?valida:"DependenciaDestino";
 						if (isOculta(valida)) {
 							texto = valida;
 							continue;

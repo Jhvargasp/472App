@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,16 +56,18 @@ public class MinminasPlantillasController {
 
 	private static Hashtable LABELS_PLANILLAS = new Hashtable();
 
+	private final String CLASE_INTERNA = "ComunicacionInterna"; // ComunicacionMemorando
+
 	static {
-		LABELS_PLANILLAS.put(Constants
-				.getProperty("CORRESPONDENCIA_TIPO_ENTRANTE"), Constants
-				.getProperty("LABEL_PLANILLA_TIPO_ENTRANTE"));
-		LABELS_PLANILLAS.put(Constants
-				.getProperty("CORRESPONDENCIA_TIPO_INTERNA"), Constants
-				.getProperty("LABEL_PLANILLA_TIPO_INTERNA"));
-		LABELS_PLANILLAS.put(Constants
-				.getProperty("CORRESPONDENCIA_TIPO_SALIENTE"), Constants
-				.getProperty("LABEL_PLANILLA_TIPO_SALIENTE"));
+		LABELS_PLANILLAS.put(
+				Constants.getProperty("CORRESPONDENCIA_TIPO_ENTRANTE"),
+				Constants.getProperty("LABEL_PLANILLA_TIPO_ENTRANTE"));
+		LABELS_PLANILLAS.put(
+				Constants.getProperty("CORRESPONDENCIA_TIPO_INTERNA"),
+				Constants.getProperty("LABEL_PLANILLA_TIPO_INTERNA"));
+		LABELS_PLANILLAS.put(
+				Constants.getProperty("CORRESPONDENCIA_TIPO_SALIENTE"),
+				Constants.getProperty("LABEL_PLANILLA_TIPO_SALIENTE"));
 	}
 
 	public MinminasPlantillasController() {
@@ -70,9 +75,9 @@ public class MinminasPlantillasController {
 	}
 
 	private List buscarNoPlanillas(String tipo) {
-		String campoDestinatario = "Destinatario";
-		if (tipo.equalsIgnoreCase("ComunicacionMemorando")) { // interna
-			campoDestinatario = "Destino";
+		String campoDestinatario = "DependenciaDestino";// Destinatario
+		if (tipo.equalsIgnoreCase(CLASE_INTERNA)) { //
+			// campoDestinatario = "";//"Destino";
 		}
 		// saliente
 
@@ -87,20 +92,20 @@ public class MinminasPlantillasController {
 
 		List set = null;
 		try {
-			set = P8Template.getObjectsWithSQL(sql, IntentSession
-					.vaidateConnection(null), 1000);
+			set = P8Template.getObjectsWithSQL(sql,
+					IntentSession.vaidateConnection(null), 1000);
 			set = validaCopias(tipo, set);
 
-			if (tipo.equalsIgnoreCase("ComunicacionMemorando")) { // interna
-				tipo = "ComunicacionSaliente";
-				sql = "Select  Id,  Origen, FechaRadicado,  PersonaDestinatario , InstitucionDestinatario"
+			if (tipo.equalsIgnoreCase(CLASE_INTERNA)) { // ComunicacionMemorando
+				tipo = "ComunicacionSaliente"; // PersonaDestinatario
+				sql = "Select  Id,  Origen, FechaRadicado,  PersonaDestino , EntidadDestinatario"
 						+ ",  NombreCreador,  Radicado,Anexos "
 						+ "  From "
 						+ tipo
 						+ " 		   Where VersionStatus=1 and CodigoPlanilla is NULL Order By Origen ";
 				log.debug(sql);
-				List set2 = P8Template.getObjectsWithSQL(sql, IntentSession
-						.vaidateConnection(null), 1000);
+				List set2 = P8Template.getObjectsWithSQL(sql,
+						IntentSession.vaidateConnection(null), 1000);
 				set2 = validaCopias(tipo, set2);
 				set.addAll(set2);
 			}
@@ -122,6 +127,7 @@ public class MinminasPlantillasController {
 		model.addAttribute("results", set);
 		model.addAttribute("tipoCorrespondencia", LABELS_PLANILLAS.get(tipo));
 		model.addAttribute("tipo", tipo);
+		System.out.println(set);
 		return "listarCorreosNoPlanilla";
 	}
 
@@ -129,42 +135,46 @@ public class MinminasPlantillasController {
 		ObjectStore store = IntentSession.vaidateConnection(null);
 		List nSet = new ArrayList();
 		// list hashmap
-		if (tipo.equalsIgnoreCase("ComunicacionMemorando")) {
+		if (tipo.equalsIgnoreCase(CLASE_INTERNA)) {
 			for (Object object : set) {
 				Hashtable<String, Object> map = (Hashtable) object;
-				
-				String des=map.get("Destino").toString();
-				map.put("Destinatario", des);
-				//nSet.add(map);
 
-				
+				String des = map.get("DependenciaDestino").toString();
+				map.put("DependenciaDestino", des);
+				// nSet.add(map);
+
 				Id id = (Id) map.get("Id");
 				Document d = (Document) store.fetchObject("Document", id, null);
 				// DependenciasDestinatarios NombresDestinatarios
-				validateAddCopy(nSet, d.getProperties().getStringListValue(
-						"DependenciasDestinatarios"), map);
-				validateAddCopy(nSet, d.getProperties().getStringListValue(
-						"DependenciasConCopiaInterna"), map);
+				validateAddCopy(
+						nSet,
+						d.getProperties().getStringListValue(
+								"ConCopiaExternaA"), map);//
+				validateAddCopy(nSet,
+						d.getProperties()
+								.getStringListValue("ConCopiaInternaA"), map);// DependenciasConCopiaInterna
 			}
 
 		} else if (tipo.equalsIgnoreCase("ComunicacionSaliente")) {
 			for (Object object : set) {
 				Hashtable<String, Object> map = (Hashtable) object;
-				String des = map.get("PersonaDestinatario").toString();
+				String des = map.get("PersonaDestino").toString();// PersonaDestinatario
 				if (des.length() >= 0) {
 					des += " ";
 				}
-				des = map.get("InstitucionDestinatario").toString();
-				map.put("Destinatario", des);
+				des = map.get("EntidadDestinatario").toString();// InstitucionDestinatario
+				map.put("DependenciaDestino", des);
 				nSet.add(map);
 
 				Id id = (Id) map.get("Id");
 				Document d = (Document) store.fetchObject("Document", id, null);
 				// DependenciasDestinatarios NombresDestinatarios
-				validateAddCopy(nSet, d.getProperties().getStringListValue(
-						"ConCopiaExternaA"), map);
-				validateAddCopy(nSet, d.getProperties().getStringListValue(
-						"ConCopiaA"), map);
+				validateAddCopy(nSet,
+						d.getProperties()
+								.getStringListValue("ConCopiaExternaA"), map);
+				validateAddCopy(nSet,
+						d.getProperties()
+								.getStringListValue("ConCopiaInternaA"), map);// ConCopiaA
 			}
 
 		} else {
@@ -173,8 +183,9 @@ public class MinminasPlantillasController {
 				Hashtable<String, Object> map = (Hashtable) object;
 				Id id = (Id) map.get("Id");
 				Document d = (Document) store.fetchObject("Document", id, null);
-				validateAddCopy(nSet, d.getProperties().getStringListValue(
-						"ConCopiaA"), map);
+				validateAddCopy(nSet,
+						d.getProperties()
+								.getStringListValue("ConCopiaInternaA"), map);// ConCopiaA
 			}
 		}
 
@@ -223,22 +234,23 @@ public class MinminasPlantillasController {
 
 		try {
 			List set = buscarNoPlanillas(tipo);
-			String colDes="Destinatario";
-			if(tipo.equalsIgnoreCase("ComunicacionMemorando")){
-				tipo="ComunicacionInterna";
-				colDes="Origen";
-				
+			String colDes = "DependenciaDestino";// Destinatario
+			if (tipo.equalsIgnoreCase(CLASE_INTERNA)) {
+				tipo = "ComunicacionInterna";
+				colDes = "Origen";
+
 			}
 
 			for (Object object : set) {
-				String dest = ((Hashtable) object).get(colDes)
-						.toString();
+				String dest = ((Hashtable) object).get(colDes).toString();
 				if (pisoDepMap.get(dest) != null
 						&& pisoDepMap.get(dest).toString().length() > 0) {
-					((Hashtable) object).put("Piso", "Piso "
-							+ pisoDepMap.get(dest));
+					((Hashtable) object).put("Piso",
+							"Piso " + pisoDepMap.get(dest));
 				}
 			}
+			set = sortListMap(set, rompimiento);
+			System.out.println("PDF " + set);
 			PlanillaCorrespondenciaRecibida planilla = new PlanillaCorrespondenciaRecibida();
 			planilla.setCampoRompimiento(rompimiento);
 			planilla.setCodigoFormato(Constants
@@ -362,28 +374,28 @@ public class MinminasPlantillasController {
 		// property.setValue(codigoPlanilla);
 		// properties.add(property);
 		properties.put("DocumentTitle", codigoPlanilla);
-		//		
+		//
 		// property = ObjectFactory
 		// .getProperty(com.intent.correspondencia.logic.Constans.CODIGO_PLANILLA);
 		// property.setValue(codigoPlanilla);
 		// properties.add(property);
 		properties
 				.put(Constants.getProperty("CODIGO_PLANILLA"), codigoPlanilla);
-		//		
+		//
 		// property = ObjectFactory
 		// .getProperty(com.intent.correspondencia.logic.Constans.RECORRIDO_PLANILLA);
 		// property.setValue(forma.getRecorrido());
 		// properties.add(property);
 		// properties.put(Constants.getProperty("RECORRIDO_PLANILLA"), forma
 		// .getRecorrido());
-		//		
+		//
 		// property = ObjectFactory
 		// .getProperty(com.intent.correspondencia.logic.Constans.MENSAJERO_PLANILLA);
 		// property.setValue(forma.getMensajero());
 		// properties.add(property);
 		// properties.put(Constants.getProperty("MENSAJERO_PLANILLA"), forma
 		// .getMensajero());
-		//		
+		//
 		// property = ObjectFactory
 		// .getProperty(com.intent.correspondencia.logic.Constans.EDIFICIO_PLANILLA);
 		// property.setValue(forma.getEdificio());
@@ -398,7 +410,7 @@ public class MinminasPlantillasController {
 		// properties.put(Constants.getProperty("CGC_PLANILLA"),
 		// forma.getCgc());
 
-		//		
+		//
 		// property = ObjectFactory
 		// .getProperty(com.intent.correspondencia.logic.Constans.CORRESPONDENCIA_FECHADOCUMENTO);
 		// property.setValue(fechaDocumento);
@@ -406,7 +418,7 @@ public class MinminasPlantillasController {
 		properties.put(Constants.getProperty("CORRESPONDENCIA_FECHADOCUMENTO"),
 				fechaDocumento);
 
-		//		
+		//
 		// property = ObjectFactory
 		// .getProperty(com.intent.correspondencia.logic.Constans.DEPENDENCIAS_PLANILLA);
 		// property.setValue(buffer.toString());
@@ -418,15 +430,15 @@ public class MinminasPlantillasController {
 		// .getObjectStore(
 		// com.intent.correspondencia.logic.Constans.LIBRERIA_CORRESPONDENCIA,
 		// session);
-		//		
+		//
 		// Document document = (Document) objectStore.createObject(
 		// com.intent.correspondencia.logic.Constans.CLASE_PLANILLA, //
 		// ClassDescription.DOCUMENT
 		// properties, null);
 
-		Document document = P8DAO.a4XcreateDocument(properties, Constants
-				.getProperty("CLASE_PLANILLA"), Constants
-				.getProperty("FOLDER_PLANILLAS"), store);
+		Document document = P8DAO.a4XcreateDocument(properties,
+				Constants.getProperty("CLASE_PLANILLA"),
+				Constants.getProperty("FOLDER_PLANILLAS"), store);
 		// Folder folder = (Folder)
 		// objectStore.getObject(BaseObject.TYPE_FOLDER,
 		// com.intent.correspondencia.logic.Constans.FOLDER_PLANILLAS);
@@ -447,5 +459,28 @@ public class MinminasPlantillasController {
 		document.save(RefreshMode.REFRESH);
 		// System.out.println("Documento creado. Id: " + document.getId());
 	}
+
+	
+	public static List sortListMap(List<Hashtable<String, Object>> set, int rompimiento) {
+		String colRompimientoStr = "DependenciaDestino";
+		if (rompimiento == 0) {
+			colRompimientoStr = "Piso";
+		}
+		TreeMap sortTable = new TreeMap();
+		for (Object object : set) {
+			sortTable.put(((Hashtable) object).get(colRompimientoStr) + ", "
+					+ ((Hashtable) object).get("Radicado"), object);
+		}
+
+		List s = new ArrayList();
+		Iterator it = sortTable.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			String key = (String) entry.getKey();
+			s.add(entry.getValue());
+			System.out.println("Sorted Key ..." + key);
+		}// while
+		return s;
+	}// printMap
 
 }
