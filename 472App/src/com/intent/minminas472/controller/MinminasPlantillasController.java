@@ -127,7 +127,7 @@ public class MinminasPlantillasController {
 		model.addAttribute("results", set);
 		model.addAttribute("tipoCorrespondencia", LABELS_PLANILLAS.get(tipo));
 		model.addAttribute("tipo", tipo);
-		System.out.println(set);
+		//System.out.println(set);
 		return "listarCorreosNoPlanilla";
 	}
 
@@ -250,7 +250,7 @@ public class MinminasPlantillasController {
 				}
 			}
 			set = sortListMap(set, rompimiento);
-			System.out.println("PDF " + set);
+			//System.out.println("PDF " + set);
 			PlanillaCorrespondenciaRecibida planilla = new PlanillaCorrespondenciaRecibida();
 			planilla.setCampoRompimiento(rompimiento);
 			planilla.setCodigoFormato(Constants
@@ -478,7 +478,7 @@ public class MinminasPlantillasController {
 			Map.Entry entry = (Map.Entry) it.next();
 			String key = (String) entry.getKey();
 			s.add(entry.getValue());
-			System.out.println("Sorted Key ..." + key);
+			//System.out.println("Sorted Key ..." + key);
 		}// while
 		return s;
 	}// printMap
