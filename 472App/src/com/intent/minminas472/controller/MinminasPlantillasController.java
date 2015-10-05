@@ -142,7 +142,8 @@ public class MinminasPlantillasController {
 				String des = map.get("DependenciaDestino").toString();
 				map.put("DependenciaDestino", des);
 				// nSet.add(map);
-
+				/** quitar copias segun propiedades 
+				
 				Id id = (Id) map.get("Id");
 				Document d = (Document) store.fetchObject("Document", id, null);
 				// DependenciasDestinatarios NombresDestinatarios
@@ -153,6 +154,8 @@ public class MinminasPlantillasController {
 				validateAddCopy(nSet,
 						d.getProperties()
 								.getStringListValue("ConCopiaInternaA"), map);// DependenciasConCopiaInterna
+								
+								**/
 			}
 
 		} else if (tipo.equalsIgnoreCase("ComunicacionSaliente")) {
@@ -166,6 +169,8 @@ public class MinminasPlantillasController {
 				map.put("DependenciaDestino", des);
 				nSet.add(map);
 
+				
+				/** quitar copias segun propiedades 
 				Id id = (Id) map.get("Id");
 				Document d = (Document) store.fetchObject("Document", id, null);
 				// DependenciasDestinatarios NombresDestinatarios
@@ -175,17 +180,24 @@ public class MinminasPlantillasController {
 				validateAddCopy(nSet,
 						d.getProperties()
 								.getStringListValue("ConCopiaInternaA"), map);// ConCopiaA
+								
+								**/
 			}
 
 		} else {
 			nSet.addAll(set);
 			for (Object object : set) {
 				Hashtable<String, Object> map = (Hashtable) object;
+				
+				/** quitar copias segun propiedades 
+				
 				Id id = (Id) map.get("Id");
 				Document d = (Document) store.fetchObject("Document", id, null);
 				validateAddCopy(nSet,
 						d.getProperties()
 								.getStringListValue("ConCopiaInternaA"), map);// ConCopiaA
+												**/
+
 			}
 		}
 
