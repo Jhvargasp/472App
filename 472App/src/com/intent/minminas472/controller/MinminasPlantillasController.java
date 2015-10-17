@@ -142,8 +142,7 @@ public class MinminasPlantillasController {
 				String des = map.get("DependenciaDestino").toString();
 				map.put("DependenciaDestino", des);
 				// nSet.add(map);
-				/** quitar copias segun propiedades 
-				
+
 				Id id = (Id) map.get("Id");
 				Document d = (Document) store.fetchObject("Document", id, null);
 				// DependenciasDestinatarios NombresDestinatarios
@@ -154,8 +153,6 @@ public class MinminasPlantillasController {
 				validateAddCopy(nSet,
 						d.getProperties()
 								.getStringListValue("ConCopiaInternaA"), map);// DependenciasConCopiaInterna
-								
-								**/
 			}
 
 		} else if (tipo.equalsIgnoreCase("ComunicacionSaliente")) {
@@ -169,8 +166,6 @@ public class MinminasPlantillasController {
 				map.put("DependenciaDestino", des);
 				nSet.add(map);
 
-				
-				/** quitar copias segun propiedades 
 				Id id = (Id) map.get("Id");
 				Document d = (Document) store.fetchObject("Document", id, null);
 				// DependenciasDestinatarios NombresDestinatarios
@@ -180,24 +175,17 @@ public class MinminasPlantillasController {
 				validateAddCopy(nSet,
 						d.getProperties()
 								.getStringListValue("ConCopiaInternaA"), map);// ConCopiaA
-								
-								**/
 			}
 
 		} else {
 			nSet.addAll(set);
 			for (Object object : set) {
 				Hashtable<String, Object> map = (Hashtable) object;
-				
-				/** quitar copias segun propiedades 
-				
 				Id id = (Id) map.get("Id");
 				Document d = (Document) store.fetchObject("Document", id, null);
 				validateAddCopy(nSet,
 						d.getProperties()
 								.getStringListValue("ConCopiaInternaA"), map);// ConCopiaA
-												**/
-
 			}
 		}
 
@@ -474,6 +462,7 @@ public class MinminasPlantillasController {
 
 	
 	public static List sortListMap(List<Hashtable<String, Object>> set, int rompimiento) {
+	System.out.println("in:"+set.size());
 		String colRompimientoStr = "DependenciaDestino";
 		if (rompimiento == 0) {
 			colRompimientoStr = "Piso";
@@ -481,7 +470,9 @@ public class MinminasPlantillasController {
 		TreeMap sortTable = new TreeMap();
 		for (Object object : set) {
 			sortTable.put(((Hashtable) object).get(colRompimientoStr) + ", "
-					+ ((Hashtable) object).get("Radicado"), object);
+							+ ((Hashtable) object).get("DependenciaDestino") + ", "
+							+ ((Hashtable) object).get("Radicado")
+					, object);
 		}
 
 		List s = new ArrayList();
@@ -492,6 +483,14 @@ public class MinminasPlantillasController {
 			s.add(entry.getValue());
 			//System.out.println("Sorted Key ..." + key);
 		}// while
+		/*
+		String[] columnNames = new String[] { "Origen",
+				"Radicado", "Anexos", "Destinatario",
+				"FechaRadicado", "" };
+
+			valida= (i!=3)?valida:"DependenciaDestino";
+		*/
+		System.out.println("Out:"+s.size());
 		return s;
 	}// printMap
 
