@@ -26,8 +26,8 @@ public class DataBaseQuery extends BaseAjaxServlet {
 		if (tipo.equalsIgnoreCase("PesoValor")) {
 			cad = new StringBuffer(
 					"Select precio from Tbl_Tarifascorreos where TipoCorreo like '%"
-							+ args[0] + "%' and " + args[1] + ">Peso and "
-							+ args[1] + "<PesoMaximo");
+							+ args[0] + "%' and " + args[1] + ">=Peso and "
+							+ args[1] + "<=PesoMaximo");
 		}
 		if (tipo.equalsIgnoreCase("ciudad")) {
 			cad = new StringBuffer(
