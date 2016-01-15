@@ -51,6 +51,7 @@ public class Minminas472Controller {
 
 	private static Logger log = Logger.getLogger(Minminas472Controller.class);
 	SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+	SimpleDateFormat dfFull = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
 
 	public Minminas472Controller() {
 
@@ -174,15 +175,15 @@ public class Minminas472Controller {
 					"FechaRadicado", "Destinatario", "Direccion", "Peso",
 					"Precio", "Ciudad" });
 			Date d = (Date) map.get("FechaRadicado");
-			map.put("FechaRadicado", df.format(d));
+			map.put("FechaRadicado", dfFull.format(d));
 		} else {
 			map = P8DAO.a4XgetProperties(IntentSession.vaidateConnection(null)
 					.getObject("Document", idcorrespondencia), new String[] {
 					"Radicado", "FechaRadicado", "Destino",
 					"DependenciaRemitente" });// "InstitucionEmisorRemitente","Destinatario"
 			Date d = (Date) map.get("FechaRadicado");
-			map.put("FechaRadicado", df.format(d));
-			map.put("FechaRadicado", df.format(d));
+			map.put("FechaRadicado", dfFull.format(d));
+			//map.put("FechaRadicado", df.format(d));
 			map.put("Destinatario", map.get("Destino"));
 			map.put("InstitucionEmisorRemitente", map
 					.get("DependenciaRemitente"));
@@ -235,7 +236,7 @@ public class Minminas472Controller {
 		map.put("TipoDeCorreo", tipoCorreo);
 		map.put("Radicado", radicado);
 		try {
-			map.put("FechaRadicado", df.parse(fechaRadicado));
+			map.put("FechaRadicado", dfFull.parse(fechaRadicado));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
